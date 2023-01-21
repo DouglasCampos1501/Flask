@@ -46,4 +46,11 @@ def subtrair():
     num2 = int(request.args.get('num2'))
     return str(num1 - num2) 
 
+@app.route('/multi',methods=['POST'])
+def multi():
+    num1 = int(request.form['num1'])
+    num2 = int(request.form['num2'])
+    return str(num1*num2)
+
+
 app.run(debug=True)
