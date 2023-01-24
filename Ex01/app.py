@@ -1,4 +1,4 @@
-""""
+"""
 -install pip
 python -m pip install --user --upgrade pip
 -install flask
@@ -13,19 +13,33 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# @app.route('/date',methods=['GET'])
+# def date():
+#     return render_template('date.html')
+
+# def calculate_dif_dates(start_date, end_date):
+#     days = (end_date - start_date).days
+#     weeks = int(days/7)
+#     months = 12 * (end_date.year - start_date.year) + end_date.month - start_date.month
+#     return {
+#         'days': days,
+#         'weeks': weeks,
+#         'months': months
+#         }
+
 @app.route('/date',methods=['GET'])
 def date():
     return render_template('date.html')
 
-def calculate_dif_dates(start_date, end_date):
-    days = (end_date - start_date).days
+def calculate_dif_dates(start_date,end_date):
+    days = (end_date-start_date).days
     weeks = int(days/7)
-    months = 12 * (end_date.year - start_date.year) + end_date.month - start_date.month
+    months = 12 * (end_date.year - start_date.year) + end_date.month - start_date.month;
     return {
-        'days': days,
-        'weeks': weeks,
-        'months': months
-        }
+        'days':days,
+        'weeks':weeks,
+        'months':months
+    }
 
 @app.route('/date_service',methods=['GET'])
 def date_service_get():
@@ -45,7 +59,22 @@ def date_service_post():
 
     return Response ("Error on input", status = 400)
 
-
+@app.route('/numbers_service',methods=['POST','GET'])
+def numbers_service():
+    if request.method == 'POST':
+        numbers = request.json['numbers']
+    elif request.method == 'GET':
+        numbers = request.args.get('numbers')
+    list = numbers.split(';')
+    list = [int(x) for x in list]
+    dict ={}
+    list.sort()
+    dict['sorted'] = str(list)
+    list.reverse()
+    dict['reversed'] = str(list)
+    evens = [i for i in list if i%2 == 0]
+    dict['evens'] = str(evens)
+    return dict   
 
 
 app.run(debug=True)
