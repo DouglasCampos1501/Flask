@@ -34,27 +34,27 @@
                 .catch(error => console.error(error))
         }
 
-        function postSearch(){
-            let url = "/contacts/<str:'name'>"
-            const find = document.getElementById('find')
-            const search = { "name": find.value }
-            const resultSearch = document.getElementById('result')
-            find.value = ""
-            fetch(url, {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(contact)
-            })
+        // function postSearch(){
+        //     let url = "/contacts/<str:'name'>"
+        //     const find = document.getElementById('find')
+        //     const search = { "name": find.value }
+        //     const resultSearch = document.getElementById('result')
+        //     find.value = ""
+        //     fetch(url, {''
+        //         method: "GET",
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify(contact)
+        //     })
 
-                .then(response => response.json())
-                .then(json => {
-                    console.log(json)
-                    result.innerHTML = "<p>Name: "+json.name+"</p>"+"<p>Phone: "+json.phone+"</p>"
-                })
-                .catch(error => console.error(error))
-        }
+        //         .then(response => response.json())
+        //         .then(json => {
+        //             console.log(json)
+        //             result.innerHTML = "<p>Name: "+json.name+"</p>"+"<p>Phone: "+json.phone+"</p>"
+        //         })
+        //         .catch(error => console.error(error))
+        // }
     </script>
 </head>
 

@@ -1,64 +1,66 @@
-from flask import Flask, jsonify, request, render_template, Response
-crud = Flask(__name__)
+from flask import Flask, jsonify, request, render_template
+app = Flask(__name__)
 
-contacts = [{'id': 1, 'name': 'John Doe', 'phone': '555-555-5555'}]
+contacts = [{'id': 1, 'name': 'John Doe',  'phone': '555-555-5555'}]
 
-# route template
-@crud.route('/contact',methods=['GET'])
+
+@app.route('/contact.html')
 def contact():
     return render_template('crud.html')
 
+# GET request to retrieve all contacts
+@app.route('/contacts', methods=['GET'])
+def get_contacts():
+    if not contacts:
+        return jsonify({'message':'No contacts founded in server'}), 404
+    return jsonify({'contacts': contacts}), 200
 
-@crud.route('/all_contact',methods=['POST'])
-def all_contact_post():
-    name = request.json['name']
-    phone = request.json['phone']
-    id = request.json['id']
-    contact = {'id':id,'name':name,'phone':phone}
-    contacts.append(contact)
-    return jsonify(contact)
-
-
-# # GET request to retrieve one contacts
-@crud.route('/contacts/<str:"name">', methods=['get'])
+# GET request to retrieve one contacts
+@app.route('/contacts/<int:id>', methods=['get'])
 def get_contact(id):
-    return {'contact': ''}
+    for contact in contacts:
+        if id == contact['id']:
+            return jsonify({'contact': contact}),200
+    return jsonify({'message':'contact not found'}), 404
+
+# POST request to add a new contact with data of the new contact on a json file
+@app.route('/contacts', methods=['POST'])
+def add_contact():
+    if not request.is_json:
+        return jsonify({'message':'body is not a json'}), 415
+    data = request.get_json()
+    if not data or not all(key in data for key in ('name','phone')):
+        return jsonify({'message':'bad request'}), 400
+    id = 1
+    if len(contacts) > 0:
+        id = contacts[-1]['id']+1
+    c = {'id':id,'name':data['name'],'phone':data['phone']}
+    contacts.append(c) 
+    return jsonify({'contact': c}), 201
+
+# PUT request to update a contact
+@app.route('/contacts/<int:id>', methods=['PUT'])
+def update_contact(id):
+    if not request.is_json:
+        return jsonify({'message':'body is not a json'}), 415
+    data = request.get_json()
+    if not data or not all(key in data for key in ('name','phone')):
+        return jsonify({'message':'bad request'}), 400
+    for i,contact in enumerate(contacts):
+        if contact['id'] == id:
+            contacts[i] = {'id':id, 'name':data['name'],'phone':data['phone']}    
+            return jsonify({'contact': contacts[i]}),200
+    return jsonify({'message':'contact not found'}), 404
+
+# DELETE request to delete a contact
+@app.route('/contacts/<int:id>', methods=['DELETE'])
+def delete_contact(id):
+    for i,contact in enumerate(contacts):
+        if contact['id'] == id:
+            del contacts[i]   
+            return jsonify({'message': 'contact deleted'}),200
+    return jsonify({'message':'contact not found'}), 404
+    
 
 
-
-
-
-
-
-
-
-
-
-# # GET request to retrieve all contacts
-# @crud.route('/contacts', methods=['GET'])
-# def get_contacts():
-#     return {'contacts': ''}
-
-# # GET request to retrieve one contacts
-# @crud.route('/contacts/<int:id>', methods=['get'])
-# def get_contact(id):
-#     return {'contact': ''}
-
-# # POST request to add a new contact with data of the new contact on a json file
-# @crud.route('/contacts', methods=['POST'])
-# def add_contact():
-#     #id is created here 
-#     return {'contact': ''}
-
-# # PUT request to update a contact
-# @crud.route('/contacts/<int:id>', methods=['PUT'])
-# def update_contact(id):
-#     return {'contact': ''}
-
-# # DELETE request to delete a contact
-# @crud.route('/contacts/<int:id>', methods=['DELETE'])
-# def delete_contact(id):
-#     return {'message': ''}
-
-
-crud.run(debug=True)
+app.run(debug=True)
