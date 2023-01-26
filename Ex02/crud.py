@@ -1,12 +1,12 @@
 from flask import Flask, jsonify, request, render_template
 app = Flask(__name__)
 
-contacts = [{'id': 1, 'name': 'John Doe',  'phone': '555-555-5555'}]
+contacts = [{'id': 1, 'name': 'John Doe',  'phone': '555-555-5555'}, {'id': 2, 'name': 'JAOA Doe',  'phone': '555-555-5555'}]
 
 
 @app.route('/contact.html')
 def contact():
-    return render_template('crud.html')
+    return render_template('crudFlask.html')
 
 # GET request to retrieve all contacts
 @app.route('/contacts', methods=['GET'])
@@ -16,7 +16,7 @@ def get_contacts():
     return jsonify({'contacts': contacts}), 200
 
 # GET request to retrieve one contacts
-@app.route('/contacts/<int:id>', methods=['get'])
+@app.route('/contacts/<int:id>', methods=['GET'])
 def get_contact(id):
     for contact in contacts:
         if id == contact['id']:
@@ -61,6 +61,4 @@ def delete_contact(id):
             return jsonify({'message': 'contact deleted'}),200
     return jsonify({'message':'contact not found'}), 404
     
-
-
 app.run(debug=True)

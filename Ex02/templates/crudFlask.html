@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD - Contacts</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script>
+        function start() {
+            let url = "http://127.0.0.1:5000/contacts"
+            fetch(url)
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json)
+                    console.log(json.contacts.length)
+                    for ( let i = 0; i < json.contacts.length; i++) {
+                        console.log(json)
+                        let c = "<p>Name: " + json.contacts[i].name + "</p>" + "<p>Phone: " + json.contacts[i].phone + "</p>"
+                        result.innerHTML = c
+                    }
+                })
+                .catch(error => console.error(error))
+
+        }
+
+
+        function create() {
+            let url = "http://127.0.0.1:5000/contacts"
+            const name = document.getElementById('name')
+            const phone = document.getElementById('phone')
+            const contact = { "name": name.value, "phone": phone.value }
+            name.value = ""
+            phone.value = ""
+            console.log(contact)
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(contact)
+            })
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json)
+                    result.innerHTML = "<p>Name: " + json.contact.name + "</p>" + "<p>Phone: " + json.contact.phone + "</p>"
+                })
+                .catch(error => console.error(error))
+        }
+
+        function update() {
+            let url = "http://127.0.0.1:5000/contacts/<int:id>"
+            const name = document.getElementById('name')
+            const phone = document.getElementById('phone')
+            const contact = { "name": name.value, "phone": phone.value }
+            name.value = ""
+            phone.value = ""
+            fetch(url, {
+                method: "GET",
+            })
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+    <main>
+        <h1>CRUD - Contacts</h1>
+
+        <h2>Management contact</h2>
+        <label for="name">Name: </label>
+        <input type="text" id="name">
+        <br /><br />
+        <label for="phone">Phone: </label>
+        <input type="text" id="phone">
+        <br /><br />
+
+        <button onclick="create()">Create</button>&nbsp;&nbsp;
+        <button onclick="update()">Update</button>&nbsp;&nbsp;
+        <button onclick="search()">Search</button>&nbsp;&nbsp;
+        <button onclick="del()">Delete</button>
+        <br /><br />
+        <h2>Contact list</h2>
+        <button onclick="start()">Create</button>&nbsp;&nbsp;
+
+        <div id="result"></div>
+    </main>
+</body>
+
+</html>

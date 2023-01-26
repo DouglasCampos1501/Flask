@@ -1,0 +1,36 @@
+main{
+    width: 400px;
+    margin: 0 auto;
+    padding-top: 20px;
+    align-items: center;
+    color: #070707;
+    text-transform: capitalize;
+    font-family: 'Poppins';
+}
+
+
+input{
+    padding: 5px 15px;
+    border-radius: 10px;
+    border: 2px solid #08B7D5;
+    background-color: white;
+    color: black;
+    min-width: 250px;
+    margin-left: 10px;
+}
+
+input:focus {
+    background-color: #272727;
+    border: solid #08B7D5;
+    color: white;
+
+}
+
+button{
+    padding: 5px 15px;
+    border-radius: 10px;
+    border: solid #08B7D5;
+    background-color: #06B6D4;
+    color: white;
+    text-transform: uppercase;
+}
