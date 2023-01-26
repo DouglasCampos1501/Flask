@@ -11,24 +11,25 @@
 
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <script>
-        function start() {
+        let listUp = ""
+
+        // UPDATE LIST
+        function updateList() {
             let url = "http://127.0.0.1:5000/contacts"
+            result.innerHTML = ""
             fetch(url)
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json)
-                    console.log(json.contacts.length)
-                    for ( let i = 0; i < json.contacts.length; i++) {
-                        console.log(json)
-                        let c = "<p>Name: " + json.contacts[i].name + "</p>" + "<p>Phone: " + json.contacts[i].phone + "</p>"
-                        result.innerHTML = c
-                    }
+                    json.contacts.forEach(element => {
+                        let c = "<p>Name: " + element.name + "</p>" + "<p>Phone: " + element.phone + "</p>"
+                        result.innerHTML += c
+                        listUp += c
+                    });
                 })
                 .catch(error => console.error(error))
-
         }
 
-
+        // BUTTON CREATE 
         function create() {
             let url = "http://127.0.0.1:5000/contacts"
             const name = document.getElementById('name')
@@ -36,7 +37,6 @@
             const contact = { "name": name.value, "phone": phone.value }
             name.value = ""
             phone.value = ""
-            console.log(contact)
             fetch(url, {
                 method: "POST",
                 headers: {
@@ -46,9 +46,7 @@
             })
                 .then(response => response.json())
                 .then(json => {
-                    console.log(json)
-                    result.innerHTML = "<p>Name: " + json.contact.name + "</p>" + "<p>Phone: " + json.contact.phone + "</p>"
-                })
+                    updateList()})
                 .catch(error => console.error(error))
         }
 
@@ -69,7 +67,7 @@
 
 </head>
 
-<body>
+<body onload="updateList()">
     <main>
         <h1>CRUD - Contacts</h1>
 
@@ -87,7 +85,6 @@
         <button onclick="del()">Delete</button>
         <br /><br />
         <h2>Contact list</h2>
-        <button onclick="start()">Create</button>&nbsp;&nbsp;
 
         <div id="result"></div>
     </main>
