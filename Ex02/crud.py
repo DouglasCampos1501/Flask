@@ -23,6 +23,15 @@ def get_contact(id):
             return jsonify({'contact': contact}),200
     return jsonify({'message':'contact not found'}), 404
 
+
+# GET request to retrieve one contacts
+@app.route('/name/<string:name>', methods=['GET'])
+def get_contact_name(name):
+    for contact in contacts:
+        if name == contact['name']:
+            return jsonify({'contact': contact}),200
+    return jsonify({'message':'contact not found'}), 404
+
 # POST request to add a new contact with data of the new contact on a json file
 @app.route('/contacts', methods=['POST'])
 def add_contact():

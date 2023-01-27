@@ -8,11 +8,10 @@
     <title>CRUD - Contacts</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
-
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <script>
-        let listUp = ""
-
         // UPDATE LIST
         function updateList() {
             let url = "http://127.0.0.1:5000/contacts"
@@ -21,16 +20,40 @@
                 .then(response => response.json())
                 .then(json => {
                     json.contacts.forEach(element => {
-                        let c = "<p>Name: " + element.name + "</p>" + "<p>Phone: " + element.phone + "</p>"
+                        let c = `<tr>
+                            <td onclick="updateContact(${element.id})" class="table1"><button><span class="material-symbols-outlined">edit</span></button></td>
+                            <td class="table3">${element.name}</td>
+                            <td class="table3">${element.phone}</td>
+                            <td  onclick="deleteContact(${element.id})" class="table1"><button><span class="material-symbols-outlined">delete</span></button></td></tr>`
                         result.innerHTML += c
-                        listUp += c
                     });
                 })
                 .catch(error => console.error(error))
         }
 
+        // SEARCH 
+        function searchName() {
+            const find = document.getElementById('find')
+            let url = `http://127.0.0.1:5000/name/${find.value}`
+
+            console.log(url)
+            console.log(find.value)
+            result.innerHTML = ""
+            fetch(url)
+                .then(response => response.json())
+                .then(json => {
+                    console.log(json)
+                    result.innerHTML = `<tr>
+                            <td onclick="updateContact(${json.contact.id})" class="table1"><button><span class="material-symbols-outlined">edit</span></button></td>
+                            <td class="table3">${json.contact.name}</td>
+                            <td class="table3">${json.contact.phone}</td>
+                            <td  onclick="deleteContact(${json.contact.id})" class="table1"><button><span class="material-symbols-outlined">delete</span></button></td></tr>`
+                })
+                .catch(error => console.error(error))
+        }
+
         // BUTTON CREATE 
-        function create() {
+        function createContact() {
             let url = "http://127.0.0.1:5000/contacts"
             const name = document.getElementById('name')
             const phone = document.getElementById('phone')
@@ -46,25 +69,57 @@
             })
                 .then(response => response.json())
                 .then(json => {
-                    updateList()})
+                    updateList()
+                })
                 .catch(error => console.error(error))
         }
 
-        function update() {
-            let url = "http://127.0.0.1:5000/contacts/<int:id>"
+        // BUTTON UPDATE (ICON)
+        function updateContact(v) {
+            let url = `http://127.0.0.1:5000/contacts/${v}`
             const name = document.getElementById('name')
             const phone = document.getElementById('phone')
-            const contact = { "name": name.value, "phone": phone.value }
-            name.value = ""
-            phone.value = ""
-            fetch(url, {
-                method: "GET",
-            })
+            const data = { "name": name.value, "phone": phone.value }
+            console.log(name)
+            if (name.value === "" || phone.value === "") {
+                alert("Por favor preencha os campos para poder editar")
+            } else {
 
+                fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
+
+                    .then(json => {
+                        updateList()
+                        console.log(json)
+                    })
+                    .catch(error => console.error(error))
+            }
         }
 
-    </script>
+        // BUTTON DELETE (ICON)
+        function deleteContact(d) {
+            let url = `http://127.0.0.1:5000/contacts/${d}`
+            fetch(url, {
+                method: "DELETE",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+            })
+                .then(response => response.json())
 
+                .then(json => {
+                    updateList()
+                    console.log(json)
+                })
+                .catch(error => console.error(error))
+        }
+    </script>
 </head>
 
 <body onload="updateList()">
@@ -73,20 +128,28 @@
 
         <h2>Management contact</h2>
         <label for="name">Name: </label>
-        <input type="text" id="name">
+        <input type="text" id="name" required>
         <br /><br />
         <label for="phone">Phone: </label>
-        <input type="text" id="phone">
+        <input type="text" id="phone" required>
         <br /><br />
 
-        <button onclick="create()">Create</button>&nbsp;&nbsp;
-        <button onclick="update()">Update</button>&nbsp;&nbsp;
-        <button onclick="search()">Search</button>&nbsp;&nbsp;
-        <button onclick="del()">Delete</button>
+        <button onclick="createContact()">Create</button>&nbsp;&nbsp;
+
         <br /><br />
         <h2>Contact list</h2>
+        <div class="inLine">
+            <input type="text" id="find"> <button onclick="searchName()">Search</button> <button onclick="updateList()">Clear</button>
+        </div>
 
-        <div id="result"></div>
+        <br /><br />
+        <div>
+            <table id="result">
+
+            </table>
+
+
+        </div>
     </main>
 </body>
 
