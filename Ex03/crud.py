@@ -2,28 +2,45 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request, render_template
 
-# create the extension
 db = SQLAlchemy()
-# create the app
 app = Flask(__name__)
-# configure the SQLite database, relative to the app instance folder
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
-# initialize the app with the extension
-#db = SQLAlchemy(app)
 
-class contact(db.Model):
+
+class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     phone = db.Column(db.String(200))
 
-def __init__(id, name, phone):
-   self.id = id
-   self.name = name
-   self.phone = phone   
+with app.app_context():
+    db.create_all()
 
-#db.create_all(contact)
+# def __init__(id, name, phone):
+#    self.id = id
+#    self.name = name
+#    self.phone = phone   
 
-contacts = [{'id': 1, 'name': 'John Doe',  'phone': '555-555-5555'}, {'id': 2, 'name': 'JAOA Doe',  'phone': '555-555-5555'}]
+@app.route("/contacts", methods=["GET", "POST"])
+def user_create():
+    if request.method == "POST":
+        user = Contact(
+            name=request.form["name"],
+            phone=request.form["phone"],
+        )
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for("user_detail", id=user.id))
+
+    return render_template("crudFlask.html")
+
+@app.route("/contacts/<int:id>")
+def user_detail(id):
+    user = db.get_or_404(Contact, id)
+    return render_template("crudFlask.html", user=user)
+
+
+contacts = [{'id': 1, 'name': 'John Doe',  'phone': '555-555-5555'}, 
+            {'id': 2, 'name': 'Joao Croma',  'phone': '555-555-5555'}]
 
 
 @app.route('/contact.html')
@@ -45,10 +62,9 @@ def get_contact(id):
             return jsonify({'contact': contact}),200
     return jsonify({'message':'contact not found'}), 404
 
-
 # GET request to retrieve one contacts
 @app.route('/name/<string:name>', methods=['GET'])
-def get_contact_name(name):
+def get_contact_name(name): 
     for contact in contacts:
         if name == contact['name']:
             return jsonify({'contact': contact}),200
