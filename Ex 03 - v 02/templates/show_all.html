@@ -8,7 +8,15 @@
    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
 <script>
    function onDelete(id){
-      fetch(`http://127.0.0.1:5000/delete/${id}`, {method:"POST"})
+      fetch(`http://127.0.0.1:5000/delete/${id}`, {method:"POST"}).then( ()=>{
+         document.location.reload(true)
+      })
+   }
+
+   function onUpdate(id){
+      fetch(`http://127.0.0.1:5000/update/${id}`, {method:"POST"}).then( ()=>{
+         document.location.reload(true)
+      })
    }
 </script>
 
@@ -44,8 +52,7 @@
             <tbody>
                {% for contact in contact %}
                <tr>
-                  <td class="table1"><button><span class="material-symbols-outlined">edit</span></button>{{ contact.id
-                     }}
+                  <td class="table1"><button onclick="onUpdate('{{contact.id}}')" type="button"><span class="material-symbols-outlined">edit</span></button>
                   </td>
                   <td class="table3">{{ contact.name }}</td>
                   <td class="table3">{{ contact.phone }}</td>

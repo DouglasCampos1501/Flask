@@ -44,7 +44,20 @@ def contact_delete(id):
     contact = db.get_or_404(Contact, id)
     db.session.delete(contact)
     db.session.commit()
-    return redirect(url_for('delete'))
+    return redirect(url_for('show_all'))
+
+@app.route("/update/<int:id>", methods=["POST"])
+def contact_update(id):
+   contact = db.get_or_404(Contact, id)
+   print(contact.name)
+   contact.name = "HHHH"
+   contact.phone = "HHHHH"
+   contact.verified = True
+   db.session.commit()
+   #  contact = Contact(name = request.form['name'], phone = request.form['phone'])
+   #  db.session.update(contacts)
+   #  db.session.commit()
+   return "COCOCN"
 
 with app.app_context():
     db.create_all()
